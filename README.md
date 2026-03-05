@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Personal Finance Tracker
 
 A modern, responsive full-stack web application designed to track and manage personal finances.
@@ -68,3 +69,7 @@ To deploy this application to a production environment (like Vercel), you should
 1. In `prisma/schema.prisma`, update the provider from `"sqlite"` to `"postgresql"`.
 2. Grab a connection string for your new PostgreSQL instance and add it to your deployed `.env` file as `DATABASE_URL`.
 3. In your deployment pipeline, ensure you run `npx prisma migrate deploy` followed by `npx prisma generate` before the `next build` command executes.
+=======
+# Personal-Finance
+Records all my income/expenditure record from March 2026
+>>>>>>> 5cf84ca5ce438c30ac055f1e822df2c1681954dc
