@@ -2,6 +2,8 @@ import { AddTransactionDialog } from '@/components/transactions/add-transaction-
 import { TransactionsTable } from '@/components/transactions/transactions-table'
 import { getTransactions } from '@/app/actions/transaction'
 
+export const dynamic = 'force-dynamic'
+
 export default async function TransactionsPage({
     searchParams,
 }: {

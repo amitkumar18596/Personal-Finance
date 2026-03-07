@@ -7,6 +7,8 @@ import { RecentTransactions } from '@/components/dashboard/recent-transactions'
 import { AddTransactionDialog } from '@/components/transactions/add-transaction-dialog'
 import { getDashboardMetrics, getTransactions } from './actions/transaction'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Home() {
   const metrics = await getDashboardMetrics()
   const { transactions } = await getTransactions({ limit: 100 }) // Fetch reasonable amount for charts
