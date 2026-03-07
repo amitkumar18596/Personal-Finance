@@ -11,9 +11,9 @@ import { getTransactions } from '@/app/actions/transaction'
 import { format } from 'date-fns'
 
 export async function RecentTransactions() {
-    const transactions = await getTransactions({ limit: 5 })
+    const { transactions } = await getTransactions({ limit: 5 })
 
-    if (!transactions.length) {
+    if (transactions.length === 0) {
         return (
             <Card className="col-span-7">
                 <CardHeader>
@@ -35,6 +35,7 @@ export async function RecentTransactions() {
                 <Table>
                     <TableHeader>
                         <TableRow>
+                            <TableHead className="w-[60px]">S.No</TableHead>
                             <TableHead>Date</TableHead>
                             <TableHead>Category</TableHead>
                             <TableHead>Note</TableHead>
@@ -42,8 +43,9 @@ export async function RecentTransactions() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {transactions.map((transaction) => (
+                        {transactions.map((transaction, index) => (
                             <TableRow key={transaction.id}>
+                                <TableCell className="font-medium">{index + 1}</TableCell>
                                 <TableCell>{format(new Date(transaction.date), 'PP')}</TableCell>
                                 <TableCell>{transaction.category}</TableCell>
                                 <TableCell className="max-w-[200px] truncate">

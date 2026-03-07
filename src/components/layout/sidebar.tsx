@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import Image from 'next/image'
 import { LayoutDashboard, Receipt, BarChart3, Menu } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -36,8 +37,12 @@ export const Sidebar = () => {
         <div className="space-y-4 py-4 flex flex-col h-full bg-slate-900 text-white">
             <div className="px-3 py-2 flex-1">
                 <Link href="/" className="flex items-center pl-3 mb-14">
-                    <div className="relative w-8 h-8 mr-4 bg-white rounded-full flex items-center justify-center font-bold text-slate-900">
-                        ₹
+                    <div className="relative w-10 h-10 mr-3">
+                        <Image
+                            fill
+                            alt="Logo"
+                            src="/logo.png"
+                        />
                     </div>
                     <h1 className="text-2xl font-bold">Amit&apos;s Finance Tracker</h1>
                 </Link>

@@ -30,22 +30,24 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
-import { addTransaction } from '@/app/actions/transaction'
 import { useToast } from '@/hooks/use-toast'
+import { addTransaction, updateTransaction } from '@/app/actions/transaction'
+import { Transaction } from '@prisma/client'
 
 const formSchema = z.object({
     amount: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
         message: 'Amount must be a positive number',
     }),
-    type: z.enum(['income', 'expense']),
+    type: z.enum(['income', 'expense', 'investment']),
     category: z.string().min(1, 'Category is required'),
     date: z.string().min(1, 'Date is required'),
     note: z.string().optional(),
 })
-
+const INCOME_CATEGORIES = ['Salary', 'Freelance', 'Investments', 'Gift', 'Other']
 const EXPENSE_CATEGORIES = [
     'Food',
     'Rent',
+    'EMI',
     'Utilities',
     'Transportation',
     'Entertainment',
@@ -55,10 +57,22 @@ const EXPENSE_CATEGORIES = [
     'Transfer to Father',
     'Other',
 ]
+const INVESTMENT_CATEGORIES = [
+    'Stocks',
+    'Mutual Funds',
+    'Fixed Deposit',
+    'Crypto',
+    'Gold',
+    'Real Estate',
+    'Other',
+]
 
-const INCOME_CATEGORIES = ['Salary', 'Freelance', 'Investments', 'Gift', 'Other']
+interface AddTransactionDialogProps {
+    transaction?: Transaction
+    trigger?: React.ReactNode
+}
 
-export function AddTransactionDialog() {
+export function AddTransactionDialog({ transaction, trigger }: AddTransactionDialogProps) {
     const [open, setOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const { toast } = useToast()
@@ -66,16 +80,21 @@ export function AddTransactionDialog() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            amount: '',
-            type: 'expense',
-            category: '',
-            date: new Date().toISOString().split('T')[0],
-            note: '',
+            amount: transaction?.amount.toString() || '',
+            type: (transaction?.type as 'income' | 'expense' | 'investment') || 'expense',
+            category: transaction?.category || '',
+            date: transaction?.date ? new Date(transaction.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+            note: transaction?.note || '',
         },
     })
 
     const selectedType = form.watch('type')
-    const categories = selectedType === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES
+    const categories = 
+        selectedType === 'income' 
+            ? INCOME_CATEGORIES 
+            : selectedType === 'investment' 
+                ? INVESTMENT_CATEGORIES 
+                : EXPENSE_CATEGORIES
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true)
@@ -86,7 +105,9 @@ export function AddTransactionDialog() {
         formData.append('date', new Date(values.date).toISOString())
         if (values.note) formData.append('note', values.note)
 
-        const result = await addTransaction(formData)
+        const result = transaction
+            ? await updateTransaction(transaction.id, formData)
+            : await addTransaction(formData)
 
         if (result.error) {
             toast({
@@ -97,9 +118,9 @@ export function AddTransactionDialog() {
         } else {
             toast({
                 title: 'Success',
-                description: 'Transaction added successfully.',
+                description: transaction ? 'Transaction updated successfully.' : 'Transaction added successfully.',
             })
-            form.reset()
+            if (!transaction) form.reset()
             setOpen(false)
         }
         setIsLoading(false)
@@ -108,13 +129,15 @@ export function AddTransactionDialog() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>
-                    <Plus className="mr-2 h-4 w-4" /> Add Transaction
-                </Button>
+                {trigger || (
+                    <Button>
+                        <Plus className="mr-2 h-4 w-4" /> Add Transaction
+                    </Button>
+                )}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Add New Transaction</DialogTitle>
+                    <DialogTitle>{transaction ? 'Edit Transaction' : 'Add New Transaction'}</DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -139,6 +162,7 @@ export function AddTransactionDialog() {
                                         <SelectContent>
                                             <SelectItem value="expense">Expense</SelectItem>
                                             <SelectItem value="income">Income</SelectItem>
+                                            <SelectItem value="investment">Investment</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />

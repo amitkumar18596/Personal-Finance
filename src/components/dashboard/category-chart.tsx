@@ -47,7 +47,7 @@ export function CategoryChart({ transactions }: CategoryChartProps) {
             <CardHeader>
                 <CardTitle>Expenses by Category</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="min-h-[350px]">
                 <ResponsiveContainer width="100%" height={350}>
                     <PieChart>
                         <Pie

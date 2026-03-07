@@ -7,6 +7,7 @@ interface MetricsProps {
     metrics: {
         totalIncome: number;
         totalExpenses: number;
+        totalInvestments: number;
         balance: number;
     }
 }
@@ -15,7 +16,7 @@ export function DashboardMetrics({ metrics }: MetricsProps) {
     const isPositive = metrics.balance >= 0
 
     return (
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">Total Balance</CardTitle>
@@ -46,6 +47,17 @@ export function DashboardMetrics({ metrics }: MetricsProps) {
                 <CardContent>
                     <div className="text-2xl font-bold text-red-500">
                         -₹{metrics.totalExpenses.toFixed(2)}
+                    </div>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Total Investment</CardTitle>
+                    <TrendingUp className="h-4 w-4 text-sky-500" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold text-sky-500">
+                        ₹{metrics.totalInvestments.toFixed(2)}
                     </div>
                 </CardContent>
             </Card>

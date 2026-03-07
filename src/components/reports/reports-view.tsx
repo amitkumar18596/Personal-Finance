@@ -38,7 +38,7 @@ export function ReportsView({ transactions }: ReportsViewProps) {
 
     // Generate chart data based on timeframe
     const getChartData = () => {
-        let rawData: { name: string; date: Date; income: number; expense: number }[] = []
+        let rawData: { name: string; date: Date; income: number; expense: number; investment: number }[] = []
 
         if (timeframe === 'daily') {
             rawData = Array.from({ length: 14 }).map((_, i) => { // Last 14 days
@@ -47,7 +47,8 @@ export function ReportsView({ transactions }: ReportsViewProps) {
                     name: format(date, 'MMM dd'),
                     date: date,
                     income: 0,
-                    expense: 0
+                    expense: 0,
+                    investment: 0
                 }
             })
         } else if (timeframe === 'weekly') {
@@ -57,7 +58,8 @@ export function ReportsView({ transactions }: ReportsViewProps) {
                     name: `Week of ${format(date, 'MMM dd')}`,
                     date: date,
                     income: 0,
-                    expense: 0
+                    expense: 0,
+                    investment: 0
                 }
             })
         } else if (timeframe === 'monthly') {
@@ -67,7 +69,8 @@ export function ReportsView({ transactions }: ReportsViewProps) {
                     name: format(date, 'MMM yyyy'),
                     date: date,
                     income: 0,
-                    expense: 0
+                    expense: 0,
+                    investment: 0
                 }
             })
         } else if (timeframe === 'quarterly') {
@@ -77,7 +80,8 @@ export function ReportsView({ transactions }: ReportsViewProps) {
                     name: `Q${Math.floor(date.getMonth() / 3) + 1} ${format(date, 'yyyy')}`,
                     date: date,
                     income: 0,
-                    expense: 0
+                    expense: 0,
+                    investment: 0
                 }
             })
         } else if (timeframe === 'yearly') {
@@ -87,7 +91,8 @@ export function ReportsView({ transactions }: ReportsViewProps) {
                     name: format(date, 'yyyy'),
                     date: date,
                     income: 0,
-                    expense: 0
+                    expense: 0,
+                    investment: 0
                 }
             })
         }
@@ -107,6 +112,7 @@ export function ReportsView({ transactions }: ReportsViewProps) {
 
             if (point) {
                 if (t.type === 'income') point.income += t.amount
+                else if (t.type === 'investment') point.investment += t.amount
                 else point.expense += t.amount
             }
         })
@@ -120,10 +126,11 @@ export function ReportsView({ transactions }: ReportsViewProps) {
     const totals = data.reduce((acc, curr) => {
         acc.income += curr.income
         acc.expense += curr.expense
+        acc.investment += curr.investment
         return acc
-    }, { income: 0, expense: 0 })
+    }, { income: 0, expense: 0, investment: 0 })
 
-    const netSavings = totals.income - totals.expense
+    const netSavings = totals.income - totals.expense - totals.investment
     const savingsRate = totals.income > 0 ? ((netSavings / totals.income) * 100).toFixed(1) : 0
 
     return (
@@ -190,6 +197,10 @@ export function ReportsView({ transactions }: ReportsViewProps) {
                                         <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
                                         <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
                                     </linearGradient>
+                                    <linearGradient id="colorInvestment" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0} />
+                                    </linearGradient>
                                 </defs>
                                 <XAxis
                                     dataKey="name"
@@ -214,6 +225,7 @@ export function ReportsView({ transactions }: ReportsViewProps) {
                                 />
                                 <Area type="monotone" dataKey="income" name="Income" stroke="#22c55e" fillOpacity={1} fill="url(#colorIncome)" />
                                 <Area type="monotone" dataKey="expense" name="Expense" stroke="#ef4444" fillOpacity={1} fill="url(#colorExpense)" />
+                                <Area type="monotone" dataKey="investment" name="Investment" stroke="#0ea5e9" fillOpacity={1} fill="url(#colorInvestment)" />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>

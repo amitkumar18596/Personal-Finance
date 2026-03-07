@@ -9,7 +9,7 @@ import { getDashboardMetrics, getTransactions } from './actions/transaction'
 
 export default async function Home() {
   const metrics = await getDashboardMetrics()
-  const transactions = await getTransactions({ limit: 100 }) // Fetch reasonable amount for charts
+  const { transactions } = await getTransactions({ limit: 100 }) // Fetch reasonable amount for charts
 
   return (
     <div className="space-y-6">

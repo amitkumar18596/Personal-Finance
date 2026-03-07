@@ -2,8 +2,14 @@ import { AddTransactionDialog } from '@/components/transactions/add-transaction-
 import { TransactionsTable } from '@/components/transactions/transactions-table'
 import { getTransactions } from '@/app/actions/transaction'
 
-export default async function TransactionsPage() {
-    const transactions = await getTransactions()
+export default async function TransactionsPage({
+    searchParams,
+}: {
+    searchParams: { page?: string }
+}) {
+    const page = Number(searchParams.page) || 1
+    const pageSize = 20
+    const { transactions, totalPages } = await getTransactions({ page, pageSize })
 
     return (
         <div className="space-y-6 flex flex-col h-full">
@@ -13,7 +19,11 @@ export default async function TransactionsPage() {
             </div>
 
             <div className="flex-1">
-                <TransactionsTable initialTransactions={transactions} />
+                <TransactionsTable
+                    initialTransactions={transactions}
+                    totalPages={totalPages}
+                    currentPage={page}
+                />
             </div>
         </div>
     )
